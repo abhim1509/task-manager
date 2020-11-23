@@ -16,8 +16,8 @@ router.post('/tasks', async(req, res)=>{
 
 router.get('/tasks', async(req, res)=>{
     try{
-        await Task.find()
-        res.status(200).send(users)        
+        const task = await Task.find()
+        res.status(200).send(task)        
     }catch(e) {
         res.status(500).send(e)
     }
@@ -25,11 +25,11 @@ router.get('/tasks', async(req, res)=>{
 
 router.get('/tasks/:id', async (req, res)=>{
     try{
-        const _id= req.params
-        await Task.findById(_id)
-        if(!user) 
+        const _id= req.params.id
+        const task = await Task.findById(_id)
+        if(!task) 
             return res.status(404).send(e)
-        res.send(user)
+        res.send(task)
     }catch(e){
         res.status(500).send(e)
     }
@@ -60,9 +60,11 @@ router.patch('/tasks/:id', async (req, res)=>{
 
 router.delete('tasks/:id', async(req, res)=>{
     try{
-        const user = await User.findByIdAndDelete(req.params.id)
-        if(!user) return res.status(404).send()
-        res.send(user)
+        const task = await User.findByIdAndDelete(req.params.id)
+        if(!task) {
+            return res.status(404).send()
+        }
+        res.status(204).send()
     }   catch(e){ //reach to catch when exceptional case runs.
         res.status(404).send(e)
     }

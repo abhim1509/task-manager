@@ -16,8 +16,9 @@ router.post('/users', async(req, res) => {
 
 router.get('/users', async (req, res)=>{
     try{
-        await User.find()
-        res.status(200).send(users)    
+        const users = await User.find({})
+        res.status(200).send(users)
+           
     }catch(e){
         res.status(500).send(e)
     }
@@ -25,16 +26,19 @@ router.get('/users', async (req, res)=>{
 
 router.get('/users/:id', async(req, res)=>{
     try{
-        const _id= req.params
-        await User.findById(_id)
-        if(!user) 
+        const _id= req.params.id
+        user = await User.findById(_id)
+        if(!user){
             return res.status(404).send(e)
+        } 
+        
         res.send(user)
     }catch(e){
         res.status(500).send(e)
     }
 })
 
+//not working, results not coming in response.
 router.patch('/users/:id', async (req, res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates=['name', 'email','password','age']
@@ -52,7 +56,8 @@ router.patch('/users/:id', async (req, res)=>{
         if(!user){
             return res.status(404).send()
         }
-        res.status(200).send()
+        res.status(200).send(user)
+
     }   catch(e){ //reach to catch when exceptional case runs.
         res.status(404).send(e)
     }
