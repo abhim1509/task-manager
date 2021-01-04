@@ -11,6 +11,10 @@ const Task = mongoose.model('Task', {
         type: Boolean,
         default: false
     }
-})
+},
+    {
+        timestamps: true
+    }
+)
 
 module.exports = Task
