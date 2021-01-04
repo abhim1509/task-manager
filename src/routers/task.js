@@ -14,8 +14,28 @@ router.post('/tasks', async(req, res)=>{
         
 })
 
-router.get('/tasks', async(req, res)=>{
+// GET /tasks?completed=true
+// GET /tasks?sortBy:createdAt=desc
+router.get('/tasks', async(req, res)=>{    
+    const match = {}
+    if(req.query.completed){
+        match.completed = req.query.completed === 'true'
+    }
+
+    if(req.query.sortBy){
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]]=parts[1]==='desc'?-1:1
+    }
     try{
+        await req.user.populate({
+            path:'tasks',
+            match,
+            options:{
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            }
+        }).execPopulate()
         const task = await Task.find()
         res.status(200).send(task)        
     }catch(e) {
@@ -69,5 +89,6 @@ router.delete('tasks/:id', async(req, res)=>{
         res.status(404).send(e)
     }
 })
+
 
 module.exports = router
